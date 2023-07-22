@@ -11,7 +11,7 @@ public class PlayerFlightState : PlayerBaseState
     public override void Tick(float deltaTime)
     {
         Vector3 direction = CalculateMovement();
-        if(!BoundsCheck(stateMachine.Transform.position))
+        if(!BoundsCorrection(stateMachine.Transform.position))
             stateMachine.Transform.Translate(direction * stateMachine.BaseMovementSpeed * deltaTime);
     }
 
@@ -31,6 +31,7 @@ public class PlayerFlightState : PlayerBaseState
         Vector3 direction = stateMachine.InputReader.MovementValue;
         Vector3 position = stateMachine.Transform.position;
         Bounds bounds = GameController.Instance.Bounds;
+        //Correcting direction to not add acceleration in a direction if we are at the bounds
         if(position.y <= 0 && direction.y < bounds.Bottom|| position.y >= bounds.Top && direction.y > 0){
             direction.y = 0;
         }
@@ -41,22 +42,16 @@ public class PlayerFlightState : PlayerBaseState
         return direction;
     }
 
-    private bool BoundsCheck(Vector3 position){
+    private bool BoundsCorrection(Vector3 position){
         Bounds bounds = GameController.Instance.Bounds;
         if(position.y <= bounds.Top && position.y >= bounds.Bottom &&
             position.x <= bounds.Right && position.x >= bounds.Left)
             return false;
 
         Vector3 correctionVector = stateMachine.Transform.position;
-        if(position.y > bounds.Top)
-            correctionVector.y = bounds.Top;
-        if(position.y < bounds.Bottom)
-            correctionVector.y = bounds.Bottom;
-        if(position.x > bounds.Right)
-            correctionVector.x = bounds.Right;
-        if(position.x < bounds.Left)
-            correctionVector.x = bounds.Left;
-
+        correctionVector.x = Mathf.Clamp(correctionVector.x, bounds.Left, bounds.Right);
+        correctionVector.y = Mathf.Clamp(correctionVector.y, bounds.Bottom, bounds.Top);
+        
         Debug.Log("Correcting position from out of bounds"+correctionVector.ToString());
         stateMachine.Transform.position = correctionVector;
         return true;
