@@ -6,20 +6,20 @@ using UnityEngine.InputSystem;
 
 public class InputReader : MonoBehaviour, Controls.IFlightModeActions
 {
-    private Controls controls;
+    private Controls _controls;
     public event Action FireEvent;
     public Vector2 MovementValue { get; private set; }
 
     private void Start()
     {
-        controls = new Controls();
-        controls.FlightMode.SetCallbacks(this);
-        controls.FlightMode.Enable();
+        _controls = new Controls();
+        _controls.FlightMode.SetCallbacks(this);
+        _controls.FlightMode.Enable();
     }
 
     private void OnDestroy()
     {
-        controls.FlightMode.Disable();
+        _controls.FlightMode.Disable();
     }
 
     public void OnFire(InputAction.CallbackContext context)

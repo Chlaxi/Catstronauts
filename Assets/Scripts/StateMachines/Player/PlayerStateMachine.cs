@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerStateMachine : StateMachine
 {
     [field: SerializeField] public InputReader InputReader {get; private set;}
+    //[field: SerializeField, SerializeReference] public GameController GameController {get; private set;}
     public Transform Transform {get; private set;}
     [field: SerializeField] public float BaseMovementSpeed {get; private set;}
 
